@@ -2,12 +2,12 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-# Inicializar estado de la encuesta y respuestas
+# Inicializar estado
 if "mostrar_encuesta" not in st.session_state:
     st.session_state.mostrar_encuesta = True
 if "puntaje" not in st.session_state:
     st.session_state.puntaje = 0
-for i in range(1, 8):
+for i in range(1, 11):
     if f"respuesta{i}" not in st.session_state:
         st.session_state[f"respuesta{i}"] = "-- Elige una opción --"
 
@@ -15,25 +15,31 @@ for i in range(1, 8):
 def reiniciar_encuesta():
     st.session_state.mostrar_encuesta = True
     st.session_state.puntaje = 0
-    for i in range(1, 8):
+    for i in range(1, 11):
         st.session_state[f"respuesta{i}"] = "-- Elige una opción --"
     st.rerun()
 
 # Imagen de fondo y estilo
 st.markdown("""
     <style>
-    body #{
-#        background-image: url("https://tusitio.com/fondo.jpg");
-#        background-size: cover;
-#        background-attachment: fixed;
-#        background-repeat: no-repeat;
-#    }
+    body {
+        background-image: url("https://tusitio.com/fondo.jpg");
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+    }
     .pregunta {
         font-size: 22px;
         font-weight: bold;
         color: #333333;
         margin-top: 20px;
         margin-bottom: 10px;
+    }
+    .main {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     </style>
 """, unsafe_allow_html=True)
@@ -45,71 +51,45 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-st.title("🐾 Tu compromiso con la adopción: un test para un final feliz.")
-st.subheader("Evita regalar perros 🐶 como sorpresa o adquirirlos por moda. Cada perro merece un hogar donde sea amado, respetado y comprendido.")
+st.title("🐾 Evaluación para Adopción Responsable de Mascotas")
 
-
-
-# Mostrar encuesta si está activa
+# Mostrar encuesta
 if st.session_state.mostrar_encuesta:
     puntaje = 0
 
-    # Pregunta 1
-    opciones1 = ["-- Elige una opción --", "Casi todo el tiempo", "Solo por las noches", "Solo los fines de semana", "Casi nunca"]
-    st.markdown('<div class="pregunta">¿Con qué frecuencia estás en casa durante la semana?</div>', unsafe_allow_html=True)
-    st.session_state.respuesta1 = st.selectbox("", opciones1, index=opciones1.index(st.session_state.respuesta1))
+    preguntas = [
+        ("¿Con qué frecuencia estás en casa durante la semana?", ["Casi todo el tiempo"]),
+        ("¿Estás dispuesto a cubrir gastos veterinarios, alimentación y otros cuidados?", ["Sí, estoy preparado para asumir esos gastos"]),
+        ("¿Tienes experiencia previa cuidando mascotas?", ["Sí, he tenido mascotas antes"]),
+        ("¿Qué harías si tu mascota presenta problemas de comportamiento?", ["Buscaría ayuda profesional o entrenamiento"]),
+        ("¿Tu vivienda permite tener mascotas?", ["Sí, está permitido y tengo espacio adecuado"]),
+        ("¿Estás dispuesto a dedicar tiempo diario para jugar y convivir con tu mascota?", ["Sí, todos los días"]),
+        ("¿Qué harías si tu mascota se enferma y requiere atención urgente?", ["La llevaría al veterinario inmediatamente"]),
+        ("¿Tienes apoyo familiar o de personas cercanas para cuidar a tu mascota si tú no puedes?", ["Sí, tengo apoyo confiable"]),
+        ("Un perro puede vivir entre 10 y 15 años. ¿Ha considerado esta responsabilidad a largo plazo?", ["Sí, estoy consciente y preparado"]),
+        ("¿Qué tipo de mascota consideras más adecuada para tu estilo de vida?", ["Una pequeña y tranquila"])
+    ]
 
-    if st.session_state.respuesta1 == "Casi todo el tiempo":
-        puntaje += 1
+    opciones_por_pregunta = [
+        ["-- Elige una opción --", "Casi todo el tiempo", "Solo por las noches", "Solo los fines de semana", "Casi nunca"],
+        ["-- Elige una opción --", "Solo si no son muy altos", "No estoy seguro", "Sí, estoy preparado para asumir esos gastos", "Dependería de la situación"],
+        ["-- Elige una opción --", "Sí, he tenido mascotas antes", "No, pero estoy dispuesto a aprender", "No, y no me interesa aprender", "Solo he convivido con mascotas de otras personas"],
+        ["-- Elige una opción --", "Buscaría ayuda profesional o entrenamiento", "Intentaría resolverlo por mi cuenta", "Lo consideraría un problema menor", "Pensaría en devolverla"],
+        ["-- Elige una opción --", "Sí, está permitido y tengo espacio adecuado", "No estoy seguro", "Sí, aunque el espacio es limitado", "No está permitido"],
+        ["-- Elige una opción --", "Sí, todos los días", "Solo algunos días", "Rara vez", "No tengo tiempo"],
+        ["-- Elige una opción --", "La llevaría al veterinario inmediatamente", "Esperaría a ver si mejora", "Buscaría remedios caseros", "No sabría qué hacer"],
+        ["-- Elige una opción --", "Sí, tengo apoyo confiable", "Tal vez, pero no seguro", "No cuento con apoyo", "No lo he considerado"],
+        ["-- Elige una opción --", "Sí, estoy consciente y preparado", "Más o menos", "No mucho", "No lo había pensado"],
+        ["-- Elige una opción --", "Una que requiera atención constante", "Una independiente", "Una pequeña y tranquila", "No estoy seguro"]
+    ]
 
-    # Pregunta 2
-    opciones2 = ["-- Elige una opción --", "Solo si no son muy altos", "No estoy seguro", "Sí, estoy preparado para asumir esos gastos", "Dependería de la situación"]
-    st.markdown('<div class="pregunta">¿Estás dispuesto a cubrir gastos veterinarios, alimentación y otros cuidados?</div>', unsafe_allow_html=True)
-    st.session_state.respuesta2 = st.selectbox("", opciones2, index=opciones2.index(st.session_state.respuesta2))
-
-    if st.session_state.respuesta2 == "Sí, estoy preparado para asumir esos gastos":
-        puntaje += 1
-
-    # Pregunta 3
-    opciones3 = ["-- Elige una opción --", "Sí, he tenido mascotas antes", "No, pero estoy dispuesto a aprender", "No, y no me interesa aprender", "Solo he convivido con mascotas de otras personas"]
-    st.markdown('<div class="pregunta">¿Tienes experiencia previa cuidando mascotas?</div>', unsafe_allow_html=True)
-    st.session_state.respuesta3 = st.selectbox("", opciones3, index=opciones3.index(st.session_state.respuesta3))
-
-    if st.session_state.respuesta3 == "Sí, he tenido mascotas antes":
-        puntaje += 1
-
-    # Pregunta 4
-    opciones4 = ["-- Elige una opción --", "Buscaría ayuda profesional o entrenamiento", "Intentaría resolverlo por mi cuenta", "Lo consideraría un problema menor", "Pensaría en devolverla"]
-    st.markdown('<div class="pregunta">¿Qué harías si tu mascota presenta problemas de comportamiento?</div>', unsafe_allow_html=True)
-    st.session_state.respuesta4 = st.selectbox("", opciones4, index=opciones4.index(st.session_state.respuesta4))
-
-    if st.session_state.respuesta4 == "Buscaría ayuda profesional o entrenamiento":
-        puntaje += 1
-
-    # Pregunta 5
-    opciones5 = ["-- Elige una opción --", "Sí, está permitido y tengo espacio adecuado", "No estoy seguro", "Sí, aunque el espacio es limitado", "No está permitido"]
-    st.markdown('<div class="pregunta">¿Tu vivienda permite tener mascotas?</div>', unsafe_allow_html=True)
-    st.session_state.respuesta5 = st.selectbox("", opciones5, index=opciones5.index(st.session_state.respuesta5))
-
-    if st.session_state.respuesta5 == "Sí, está permitido y tengo espacio adecuado":
-        puntaje += 1
-
-    # Pregunta 6
-    opciones6 = ["-- Elige una opción --", " Si ", "No"]
-    st.markdown('<div class="pregunta">¿Tengo tiempo diario para paseos, juego y atención?</div>', unsafe_allow_html=True)
-    st.session_state.respuesta6 = st.selectbox("", opciones6, index=opciones6.index(st.session_state.respuesta6))
-
-    if st.session_state.respuesta6 == " Sí ,":
-        puntaje += 1
-
-    # Pregunta 7
-    opciones7 = ["-- Elige una opción --", " puede ser ", " yo "]
-    st.markdown('<div class="pregunta">¿Sabía que al adoptar un perro adquiere un compromiso de entre 10 y 15 años de cuidado y acompañamiento?</div>', unsafe_allow_html=True)
-    st.session_state.respuesta7 = st.selectbox("", opciones7, index=opciones7.index(st.session_state.respuesta7))
-
-    if st.session_state.respuesta7 == " puede ser ,":
-        puntaje += 1
-
+    for i in range(10):
+        st.markdown(f'<div class="pregunta">{preguntas[i][0]}</div>', unsafe_allow_html=True)
+        st.session_state[f"respuesta{i+1}"] = st.selectbox(
+            "", opciones_por_pregunta[i], index=opciones_por_pregunta[i].index(st.session_state[f"respuesta{i+1}"])
+        )
+        if st.session_state[f"respuesta{i+1}"] in preguntas[i][1]:
+            puntaje += 1
 
     # Botón para evaluar
     if st.button("✅ Evaluar aptitud para adoptar"):
@@ -118,9 +98,9 @@ if st.session_state.mostrar_encuesta:
         st.divider()
 
         # Mostrar resultado
-        if puntaje >= 7:
+        if puntaje >= 8:
             st.success("✅ ¡Felicidades! Según tus respuestas, eres apto para adoptar una mascota. Gracias por tu compromiso.")
-        elif 2 <= puntaje < 8:
+        elif 3 <= puntaje < 8:
             st.warning("⚠️ Tienes buena disposición, pero hay aspectos que podrías considerar antes de adoptar. ¡Infórmate más y prepárate!")
         else:
             st.error("❌ Por ahora, no pareces estar listo para adoptar una mascota. Te recomendamos reflexionar y buscar orientación antes de tomar una decisión.")
@@ -128,15 +108,10 @@ if st.session_state.mostrar_encuesta:
         # Guardar respuestas en CSV
         datos = {
             "Fecha": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")],
-            "Pregunta 1": [st.session_state.respuesta1],
-            "Pregunta 2": [st.session_state.respuesta2],
-            "Pregunta 3": [st.session_state.respuesta3],
-            "Pregunta 4": [st.session_state.respuesta4],
-            "Pregunta 5": [st.session_state.respuesta5],
-            "Pregunta 6": [st.session_state.respuesta6],
-            "Pregunta 7": [st.session_state.respuesta7],
             "Puntaje": [puntaje]
         }
+        for i in range(1, 11):
+            datos[f"Pregunta {i}"] = [st.session_state[f"respuesta{i}"]]
         df = pd.DataFrame(datos)
         df.to_csv("respuestas_adopcion.csv", mode='a', header=False, index=False)
         st.info("📝 Tus respuestas han sido registradas correctamente.")
